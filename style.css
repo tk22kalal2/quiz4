@@ -14,7 +14,6 @@ body {
   background-color: #f0f0f5;
 }
 
-/* Container Styling */
 .quiz-container {
   background-color: #ffffff;
   border-radius: 8px;
@@ -25,14 +24,28 @@ body {
   text-align: center;
 }
 
-/* Heading Style */
 .quiz-container h1 {
   font-size: 24px;
   margin-bottom: 20px;
   color: #333333;
 }
 
-/* Question Styling */
+.start-button, .next-button {
+  padding: 12px 20px;
+  background-color: #007bff;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.start-button:hover, .next-button:hover {
+  background-color: #0069d9;
+}
+
 #question {
   font-size: 20px;
   font-weight: bold;
@@ -40,7 +53,6 @@ body {
   margin-bottom: 20px;
 }
 
-/* Answer Buttons */
 .answer-buttons {
   display: flex;
   flex-direction: column;
@@ -62,7 +74,6 @@ body {
   background-color: #d0d0d0;
 }
 
-/* Feedback for Correct and Incorrect Answers */
 .correct {
   background-color: #4caf50;
   color: #ffffff;
@@ -71,23 +82,4 @@ body {
 .incorrect {
   background-color: #f44336;
   color: #ffffff;
-}
-
-/* Next Button Styling */
-.next-button {
-  display: inline-block;
-  margin-top: 20px;
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: #ffffff;
-  font-size: 16px;
-  font-weight: bold;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.next-button:hover {
-  background-color: #0069d9;
 }
