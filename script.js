@@ -1,76 +1,78 @@
-
-const quizContainer = document.querySelector(".quiz-container");
-const questionElement = document.querySelector("#question");
-const answerButtonsElement = document.querySelector("#answer-buttons");
-const nextButton = document.querySelector("#next-button");
-let currentQuestionIndex = 0;
-let isFetching = false;
-
-// Define your API URL and Key here
-const API_KEY = "AIzaSyA6crBKIIcjw6WbG-jaobiswZXnpxYJ0T4";
+const API_KEY = "AIzaSyA6crBKIIcjw6WbG-jaobiswZXnpxYJ0T4"; // Replace with your actual API key
 const API_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${API_KEY}`;
 
-// Fetch a question from the API
-const fetchQuestion = async () => {
-  isFetching = true;
+const startButton = document.getElementById("start-button");
+const nextButton = document.getElementById("next-button");
+const questionContainer = document.getElementById("question-container");
+const questionElement = document.getElementById("question");
+const answerButtonsElement = document.getElementById("answer-buttons");
+
+let currentQuestion = 0; // Track the current question number
+
+// Initialize quiz on start button click
+startButton.addEventListener("click", startQuiz);
+nextButton.addEventListener("click", loadNextQuestion);
+
+// Start the quiz and load the first question
+function startQuiz() {
+  startButton.style.display = "none";
+  questionContainer.style.display = "block";
+  loadNextQuestion();
+}
+
+// Fetch a new question from Gemini API
+async function fetchQuestion() {
   try {
     const response = await fetch(API_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        contents: [{ role: "user", parts: [{ text: "Generate an MBBS quiz question" }] }],
+        contents: [{ role: "user", parts: [{ text: `Question ${currentQuestion + 1} for MBBS quiz` }] }]
       }),
     });
     const data = await response.json();
-    if (response.ok && data.candidates) {
-      const questionText = data.candidates[0].content.parts[0].text;
-      displayQuestion(questionText);
-    } else {
-      throw new Error("Could not fetch question.");
-    }
+    return data?.candidates[0].content.parts[0].text || "No question available";
   } catch (error) {
     console.error("Error fetching question:", error);
-  } finally {
-    isFetching = false;
+    return "Failed to load question.";
   }
-};
+}
 
-// Display the question and possible answers
-const displayQuestion = (questionText) => {
+// Load and display the next question
+async function loadNextQuestion() {
+  nextButton.style.display = "none"; // Hide Next button during API call
+  currentQuestion++;
+
+  const questionText = await fetchQuestion();
+  displayQuestion(questionText);
+}
+
+// Display the question and answer options
+function displayQuestion(questionText) {
   questionElement.innerText = questionText;
-  answerButtonsElement.innerHTML = ""; // Clear previous answers
+  answerButtonsElement.innerHTML = ""; // Clear previous answer buttons
 
-  // Dummy answers; replace this with actual API response if it includes answers
-  const answers = ["Answer 1", "Answer 2", "Answer 3", "Answer 4"];
-  answers.forEach(answerText => {
+  const answers = ["Option 1", "Option 2", "Option 3", "Option 4"];
+  answers.forEach(answer => {
     const button = document.createElement("button");
-    button.innerText = answerText;
+    button.innerText = answer;
     button.classList.add("answer-button");
-    button.addEventListener("click", selectAnswer);
+    button.addEventListener("click", () => selectAnswer(button));
     answerButtonsElement.appendChild(button);
   });
-};
+}
 
-// Handle answer selection and feedback
-const selectAnswer = (e) => {
-  const selectedButton = e.target;
-  // You might use an API call to verify answer correctness or set logic here
-  const isCorrect = selectedButton.innerText === "Answer 1"; // Example check
-  selectedButton.classList.add(isCorrect ? "correct" : "incorrect");
-  
-  // Disable all answer buttons after a selection
-  Array.from(answerButtonsElement.children).forEach(button => button.disabled = true);
-  
-  nextButton.style.display = "block"; // Show the 'Next' button after an answer is selected
-};
+// Handle answer selection and display feedback
+function selectAnswer(button) {
+  const isCorrect = button.innerText === "Option 1"; // Example: Only Option 1 is correct
+  button.classList.add(isCorrect ? "correct" : "incorrect");
 
-// Load the next question
-const loadNextQuestion = () => {
-  nextButton.style.display = "none"; // Hide next button
-  Array.from(answerButtonsElement.children).forEach(button => button.classList.remove("correct", "incorrect"));
-  fetchQuestion(); // Fetch a new question
-};
+  Array.from(answerButtonsElement.children).forEach(btn => {
+    btn.disabled = true; // Disable all buttons after answering
+    if (btn !== button && btn.innerText === "Option 1") {
+      btn.classList.add("correct"); // Highlight correct answer
+    }
+  });
 
-// Event listeners
-nextButton.addEventListener("click", loadNextQuestion);
-window.addEventListener("load", fetchQuestion); // Load the first question on page load
+  nextButton.style.display = "block"; // Show Next button after selecting an answer
+}
