@@ -35,7 +35,7 @@ async function fetchQuestion() {
     const questionText = data?.candidates[0].content.parts[0].text || "No question available";
     
     // Sample realistic options for demonstration
-    correctAnswer = "B. Arachnoid mater"; 
+    correctAnswer = "B. Arachnoid mater"; // Assume correct answer from the API
     const options = [
       correctAnswer,
       "A. Dura mater",
