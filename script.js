@@ -98,4 +98,4 @@ function selectAnswer(button, selectedAnswer) {
   });
 
   nextButton.style.display = "block"; // Show Next button after selecting an answer
-}              EXPLAIN THE CODE
+}
