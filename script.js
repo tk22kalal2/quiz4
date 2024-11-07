@@ -4,11 +4,13 @@ const API_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-pro:
 const startButton = document.getElementById("start-button");
 const nextButton = document.getElementById("next-button");
 const questionContainer = document.getElementById("question-container");
-const questionElement = document.getElementById("question");
-const answerButtonsElement = document.getElementById("answer-buttons");
+const questionElement = document.querySelector(".question");
+const answerButtonsElement = document.querySelector(".answer-wrapper");
+const questionNumber = document.querySelector(".number");
 
-let currentQuestion = 0; // Track the current question number
-let correctAnswer = "";  // Store the correct answer
+let currentQuestionIndex = 0;
+let questions = []; // Array to store fetched questions
+let correctAnswer = ""; // Store the correct answer
 
 // Initialize quiz on start button click
 startButton.addEventListener("click", startQuiz);
@@ -62,40 +64,66 @@ function shuffleOptions(options) {
 // Load and display the next question
 async function loadNextQuestion() {
   nextButton.style.display = "none"; // Hide Next button during API call
-  currentQuestion++;
+  currentQuestionIndex++;
 
   const { questionText, options } = await fetchQuestion();
-  displayQuestion(questionText, options);
+  displayQuestion({ question: questionText, correct_answer: correctAnswer, incorrect_answers: options.filter(opt => opt !== correctAnswer) });
 }
 
 // Display the question and answer options
-function displayQuestion(questionText, options) {
-  questionElement.innerText = questionText;
-  answerButtonsElement.innerHTML = ""; // Clear previous answer buttons
+function displayQuestion(question) {
+  // Set question text
+  questionElement.innerHTML = question.question;
 
-  options.forEach(optionText => {
-    const button = document.createElement("button");
-    button.innerText = optionText;
-    button.classList.add("answer-button");
-    button.addEventListener("click", () => selectAnswer(button, optionText));
-    answerButtonsElement.appendChild(button);
+  // Combine correct and incorrect answers and shuffle them
+  const answers = [...question.incorrect_answers, question.correct_answer];
+  answerButtonsElement.innerHTML = "";
+  answers.sort(() => Math.random() - 0.5);
+  
+  // Display answers
+  answers.forEach((answer) => {
+    answerButtonsElement.innerHTML += `
+      <div class="answer">
+        <span class="text">${answer}</span>
+        <span class="checkbox">
+          <i class="fas fa-check"></i>
+        </span>
+      </div>
+    `;
+  });
+
+  // Update question number display
+  questionNumber.innerHTML = `Question <span class="current">${currentQuestionIndex}</span>
+            <span class="total">/${questions.length}</span>`;
+
+  // Add event listener to each answer
+  const answersDiv = document.querySelectorAll(".answer");
+  answersDiv.forEach((answer) => {
+    answer.addEventListener("click", () => {
+      if (!answer.classList.contains("checked")) {
+        answersDiv.forEach((answer) => {
+          answer.classList.remove("selected");
+        });
+        answer.classList.add("selected");
+        nextButton.disabled = false; // Enable Next button after selection
+      }
+    });
   });
 }
 
 // Handle answer selection and display feedback
-function selectAnswer(button, selectedAnswer) {
-  const isCorrect = selectedAnswer === correctAnswer; // Check if the selected answer is correct
-  button.classList.add(isCorrect ? "correct" : "incorrect");
+function selectAnswer(selectedAnswer) {
+  const isCorrect = selectedAnswer === correctAnswer;
 
-  // Highlight correct answer in green and disable all buttons
-  Array.from(answerButtonsElement.children).forEach(btn => {
-    btn.disabled = true; // Disable all buttons after answering
-    if (btn.innerText === correctAnswer) {
-      btn.classList.add("correct"); // Highlight the correct answer
-    } else if (btn !== button && !isCorrect) {
-      btn.classList.add("incorrect"); // Highlight incorrect answers if user chose wrong
+  // Add classes for correct/incorrect answers
+  document.querySelectorAll(".answer").forEach(answer => {
+    if (answer.querySelector(".text").innerText === correctAnswer) {
+      answer.classList.add("correct");
+    } else if (answer.querySelector(".text").innerText !== selectedAnswer && !isCorrect) {
+      answer.classList.add("incorrect");
     }
+    answer.classList.add("checked"); // Mark all answers as checked
   });
-
-  nextButton.style.display = "block"; // Show Next button after selecting an answer
+  
+  nextButton.style.display = "block"; // Show Next button after answer selection
 }
