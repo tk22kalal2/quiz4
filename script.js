@@ -28,7 +28,7 @@ async function fetchQuestion() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        contents: [{ role: "user", parts: [{ text: `Question ${currentQuestion + 1} for MBBS quiz` }] }]
+        contents: [{ role: "user", parts: [{ text: `Question For NEET PG` }] }]
       }),
     });
     const data = await response.json();
