@@ -34,11 +34,16 @@ async function fetchQuestion() {
     const data = await response.json();
     const questionText = data?.candidates[0].content.parts[0].text || "No question available";
     
-    // For demonstration, generate a random correct answer
-    correctAnswer = "Correct Answer"; 
-    const incorrectAnswers = ["Incorrect Option 1", "Incorrect Option 2", "Incorrect Option 3"];
+    // Sample realistic options for demonstration
+    correctAnswer = "B. Arachnoid mater"; 
+    const options = [
+      correctAnswer,
+      "A. Dura mater",
+      "C. Pia mater",
+      "D. Subarachnoid space"
+    ];
     
-    return { questionText, options: shuffleOptions([correctAnswer, ...incorrectAnswers]) };
+    return { questionText, options: shuffleOptions(options) };
   } catch (error) {
     console.error("Error fetching question:", error);
     return { questionText: "Failed to load question.", options: [] };
