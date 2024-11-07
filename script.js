@@ -1,4 +1,4 @@
-const API_KEY = "AIzaSyA6crBKIIcjw6WbG-jaobiswZXnpxYJ0T4"; // Replace with your actual API key
+const API_KEY = "AIzaSyBEKpligDpxFp0DrMI-h9CCc-xFlo4wTjM"; // Replace with your actual API key
 const API_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${API_KEY}`;
 
 const startButton = document.getElementById("start-button");
