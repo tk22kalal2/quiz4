@@ -1,4 +1,4 @@
-const API_KEY = "AIzaSyBEKpligDpxFp0DrMI-h9CCc-xFlo4wTjM"; // Replace with your actual API key
+const API_KEY = "AIzaSyA6crBKIIcjw6WbG-jaobiswZXnpxYJ0T4"; // Replace with your actual API key
 const API_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${API_KEY}`;
 
 const startButton = document.getElementById("start-button");
@@ -28,14 +28,14 @@ async function fetchQuestion() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        contents: [{ role: "user", parts: [{ text: `Question For NEET PG` }] }]
+        contents: [{ role: "user", parts: [{ text: `Question ${currentQuestion + 1} for MBBS quiz` }] }]
       }),
     });
     const data = await response.json();
     const questionText = data?.candidates[0].content.parts[0].text || "No question available";
     
     // Sample realistic options for demonstration
-    correctAnswer = "B. Arachnoid mater"; // Assume correct answer from the API
+    correctAnswer = "B. Arachnoid mater"; 
     const options = [
       correctAnswer,
       "A. Dura mater",
