@@ -1,6 +1,7 @@
 const API_KEY = "AIzaSyA6crBKIIcjw6WbG-jaobiswZXnpxYJ0T4";
 const API_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${API_KEY}`;
 
+
 const startButton = document.getElementById("start-button");
 const nextButton = document.getElementById("next-button");
 const questionContainer = document.getElementById("question-container");
@@ -58,23 +59,21 @@ async function loadNextQuestion() {
     }
 }
 
-// Display the question and options
+// Display the question and options as buttons
 function displayQuestion({ question, options }) {
     questionElement.innerHTML = question;
 
-    // Shuffle and display options as answer buttons
+    // Clear and display options as buttons
     answerButtonsElement.innerHTML = "";
     options.sort(() => Math.random() - 0.5);
 
-    options.forEach((optionText) => {
-        const answerButton = document.createElement("div");
-        answerButton.classList.add("answer");
-        answerButton.innerHTML = `
-            <span class="text">${optionText}</span>
-            <span class="checkbox"><i class="fas fa-check"></i></span>
-        `;
+    options.forEach((optionText, index) => {
+        const answerButton = document.createElement("button");
+        answerButton.classList.add("answer-button");
+        answerButton.innerHTML = `${String.fromCharCode(65 + index)}. ${optionText}`;
         answerButtonsElement.appendChild(answerButton);
 
+        // Check answer on click
         answerButton.addEventListener("click", () => checkAnswer(answerButton, optionText, options));
     });
 
@@ -82,26 +81,27 @@ function displayQuestion({ question, options }) {
 }
 
 // Check the selected answer and update the score
-function checkAnswer(selectedAnswer, answerText, options) {
-    const correctAnswer = options.find(option => option.startsWith("B")); // Assuming "B." denotes the correct answer
-    const allAnswers = document.querySelectorAll(".answer");
+function checkAnswer(selectedButton, answerText, options) {
+    const correctAnswer = options.find(option => option.startsWith("C")); // Assuming "C" option is the correct answer based on API format
 
     // Mark answers as correct or incorrect
     if (answerText === correctAnswer) {
         score++;
-        selectedAnswer.classList.add("correct"); // Mark selected correct answer as green
+        selectedButton.classList.add("correct"); // Mark selected correct answer as green
     } else {
-        selectedAnswer.classList.add("wrong"); // Mark selected wrong answer as red
+        selectedButton.classList.add("wrong"); // Mark selected wrong answer as red
 
         // Highlight the correct answer
-        allAnswers.forEach((answer) => {
-            if (answer.querySelector(".text").innerHTML === correctAnswer) {
-                answer.classList.add("correct");
+        Array.from(answerButtonsElement.children).forEach((button) => {
+            if (button.innerHTML.includes(correctAnswer)) {
+                button.classList.add("correct");
             }
         });
     }
 
     // Disable all answer buttons after selection
-    allAnswers.forEach((answer) => answer.classList.add("checked"));
+    Array.from(answerButtonsElement.children).forEach(button => button.disabled = true);
     nextButton.style.display = "block"; // Show Next button to proceed
 }
+
+
