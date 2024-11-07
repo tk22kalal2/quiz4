@@ -33,14 +33,14 @@ async function fetchQuestion() {
     });
     const data = await response.json();
     const questionText = data?.candidates[0].content.parts[0].text || "No question available";
-    
+
     // Sample options for demonstration
-    correctAnswer = "A. Red"; 
+    correctAnswer = "Red"; // Set correct answer internally
     const options = [
-      correctAnswer,
-      "B. Yellow",
-      "C. Green",
-      "D. Orange"
+      "Red",
+      "Yellow",
+      "Green",
+      "Orange"
     ];
     
     return { questionText, options };
@@ -59,7 +59,7 @@ async function loadNextQuestion() {
   displayQuestion(questionText, options);
 }
 
-// Display the question and answer options
+// Display the question and answer options as buttons
 function displayQuestion(questionText, options) {
   questionElement.innerText = questionText;
   answerButtonsElement.innerHTML = ""; // Clear previous answer buttons
