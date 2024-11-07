@@ -33,30 +33,12 @@ async function fetchQuestion() {
     });
     const data = await response.json();
     const questionText = data?.candidates[0].content.parts[0].text || "No question available";
-    
-    // Sample realistic options for demonstration
-    correctAnswer = "B. Arachnoid mater"; 
-    const options = [
-      correctAnswer,
-      "A. Dura mater",
-      "C. Pia mater",
-      "D. Subarachnoid space"
-    ];
-    
-    return { questionText, options: shuffleOptions(options) };
+
+    return { questionText, options: [] };
   } catch (error) {
     console.error("Error fetching question:", error);
     return { questionText: "Failed to load question.", options: [] };
   }
-}
-
-// Shuffle options to randomize the position of the correct answer
-function shuffleOptions(options) {
-  for (let i = options.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [options[i], options[j]] = [options[j], options[i]];
-  }
-  return options;
 }
 
 // Load and display the next question
