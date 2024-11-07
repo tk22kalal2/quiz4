@@ -33,8 +33,17 @@ async function fetchQuestion() {
     });
     const data = await response.json();
     const questionText = data?.candidates[0].content.parts[0].text || "No question available";
-
-    return { questionText, options: [] };
+    
+    // Sample options for demonstration
+    correctAnswer = "A. Red"; 
+    const options = [
+      correctAnswer,
+      "B. Yellow",
+      "C. Green",
+      "D. Orange"
+    ];
+    
+    return { questionText, options };
   } catch (error) {
     console.error("Error fetching question:", error);
     return { questionText: "Failed to load question.", options: [] };
