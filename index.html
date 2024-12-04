@@ -96,8 +96,8 @@
                 return;
             }
 
-            const apiKey = 'AIzaSyA6crBKIIcjw6WbG-jaobiswZXnpxYJ0T4';
-            const apiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent`; // Replace with the actual endpoint
+            const apiKey = 'AIzaSyA6crBKIIcjw6WbG-jaobiswZXnpxYJ0T4'; // Replace with your actual API key
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta2/models/gemini-pro:generateText`;
 
             const resultsDiv = document.getElementById('results');
             resultsDiv.innerHTML = '<p>Loading...</p>';
@@ -109,7 +109,11 @@
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${apiKey}`
                     },
-                    body: JSON.stringify({ text: userInput })
+                    body: JSON.stringify({
+                        prompt: {
+                            text: userInput
+                        }
+                    })
                 });
 
                 if (!response.ok) {
@@ -118,8 +122,8 @@
 
                 const data = await response.json();
 
-                // Assuming the API returns an array of objectives in `data.objectives`
-                const objectives = data.objectives || [];
+                // Assuming the API returns an array of objectives in `data.candidates`
+                const objectives = data.candidates?.map(c => c.text) || [];
 
                 if (objectives.length > 0) {
                     resultsDiv.innerHTML = objectives
