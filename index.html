@@ -112,18 +112,20 @@
                     body: JSON.stringify({
                         prompt: {
                             text: userInput
-                        }
+                        },
+                        temperature: 0.7, // Optional: Adjust the creativity level
+                        candidateCount: 3 // Optional: Number of results to generate
                     })
                 });
 
                 if (!response.ok) {
-                    throw new Error(`Error: ${response.status}`);
+                    throw new Error(`Error: ${response.status} - ${response.statusText}`);
                 }
 
                 const data = await response.json();
 
                 // Assuming the API returns an array of objectives in `data.candidates`
-                const objectives = data.candidates?.map(c => c.text) || [];
+                const objectives = data.candidates?.map(c => c.output) || [];
 
                 if (objectives.length > 0) {
                     resultsDiv.innerHTML = objectives
