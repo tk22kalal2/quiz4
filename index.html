@@ -18,7 +18,7 @@
 
         .container {
             width: 90%;
-            max-width: 600px;
+            max-width: 800px;
             background: #fff;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             padding: 20px;
@@ -77,13 +77,43 @@
         .result-item:last-child {
             margin-bottom: 0;
         }
+
+        /* Style for Table and Flowchart */
+        .table-form {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .table-form th, .table-form td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+
+        .table-form th {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        .table-form td {
+            background-color: #f9f9f9;
+        }
+
+        /* Flowchart/Diagram Placeholder */
+        .flowchart-placeholder {
+            width: 100%;
+            text-align: center;
+            padding: 20px;
+            border: 1px dashed #007BFF;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Learning Objectives Generator</h1>
         <textarea id="userInput" placeholder="Enter your text here..."></textarea>
-        <button onclick="generateObjectives()">Generate Learning Objectives</button>
+        <button onclick="generateLearningObjectives()">Generate Learning Objectives</button>
         <div id="results" class="results"></div>
     </div>
 
@@ -127,7 +157,6 @@
                     throw new Error("Invalid response from Groq API");
                 }
 
-                // Return the content of the response
                 return data.choices[0].message.content;
 
             } catch (error) {
@@ -136,7 +165,7 @@
             }
         }
 
-        async function generateObjectives() {
+        async function generateLearningObjectives() {
             const userInput = document.getElementById('userInput').value.trim();
 
             if (!userInput) {
@@ -150,8 +179,36 @@
             try {
                 const response = await fetchGroqResponse(userInput);
 
-                // Display the results
-                resultsDiv.innerHTML = `<div class="result-item">${response}</div>`;
+                // Step 1: Display a table form, flowchart, or other appropriate format
+                resultsDiv.innerHTML = `
+                    <h3>Learning Objectives (Step 1)</h3>
+                    <div class="flowchart-placeholder">
+                        <strong>Flowchart or Mindmap Placeholder</strong><br>
+                        [A visual representation of objectives could go here]
+                    </div>
+                    <h3>Learning Objectives in Table Form:</h3>
+                    <table class="table-form">
+                        <thead>
+                            <tr>
+                                <th>Objective</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Objective 1</td>
+                                <td>${response}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                `;
+
+                // Step 2: Display one selected learning objective
+                resultsDiv.innerHTML += `
+                    <h3>Step 2: Final Learning Objective</h3>
+                    <div class="result-item">${response}</div>
+                `;
+                
             } catch (error) {
                 resultsDiv.innerHTML = `<p>There was an error generating objectives: ${error.message}</p>`;
             }
