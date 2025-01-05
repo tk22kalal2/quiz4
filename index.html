@@ -1,218 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Learning Objectives Generator</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background-color: #f4f4f9;
-        }
-
-        .container {
-            width: 90%;
-            max-width: 800px;
-            background: #fff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            border-radius: 8px;
-        }
-
-        h1 {
-            text-align: center;
-            font-size: 1.5em;
-            margin-bottom: 20px;
-            color: #333;
-        }
-
-        textarea {
-            width: 100%;
-            height: 100px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 1em;
-            resize: none;
-        }
-
-        button {
-            display: block;
-            width: 100%;
-            padding: 10px;
-            margin-top: 10px;
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 1em;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-
-        .results {
-            margin-top: 20px;
-            padding: 10px;
-            background: #e9ecef;
-            border-radius: 5px;
-        }
-
-        .result-item {
-            margin-bottom: 10px;
-            padding: 10px;
-            background: #ffffff;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-
-        .result-item:last-child {
-            margin-bottom: 0;
-        }
-
-        /* Style for Table and Flowchart */
-        .table-form {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        .table-form th, .table-form td {
-            padding: 10px;
-            border: 1px solid #ddd;
-        }
-
-        .table-form th {
-            background-color: #007BFF;
-            color: white;
-        }
-
-        .table-form td {
-            background-color: #f9f9f9;
-        }
-
-        /* Flowchart/Diagram Placeholder */
-        .flowchart-placeholder {
-            width: 100%;
-            text-align: center;
-            padding: 20px;
-            border: 1px dashed #007BFF;
-            margin-top: 20px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF to MCQ Generator</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Learning Objectives Generator</h1>
-        <textarea id="userInput" placeholder="Enter your text here..."></textarea>
-        <button onclick="generateLearningObjectives()">Generate Learning Objectives</button>
-        <div id="results" class="results"></div>
+  <div class="container">
+    <h1>PDF to MCQ Generator</h1>
+    <p>Upload a PDF to extract text and generate MCQs.</p>
+    <input type="file" id="pdfUpload" accept="application/pdf">
+    <button id="extractText">Extract Text</button>
+    <div id="loader" style="display: none;">Processing...</div>
+    <div id="output">
+      <h2>Extracted Text:</h2>
+      <p id="textResult"></p>
     </div>
-
-    <script>
-        const GROQ_API_KEY = "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";
-        const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
-
-        async function fetchGroqResponse(prompt) {
-            const apiEndpoints = {
-                model: "llama-3.3-70b-versatile",
-                temperature: 0.2,
-                top_p: 0.9,
-                stream: false
-            };
-
-            const requestBody = {
-                model: apiEndpoints.model,
-                messages: [{ role: "user", content: prompt }],
-                temperature: apiEndpoints.temperature,
-                top_p: apiEndpoints.top_p,
-                stream: apiEndpoints.stream
-            };
-
-            try {
-                const response = await fetch(GROQ_API_URL, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${GROQ_API_KEY}`
-                    },
-                    body: JSON.stringify(requestBody)
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Groq API error: ${response.statusText}`);
-                }
-
-                const data = await response.json();
-
-                if (!data.choices?.[0]?.message?.content) {
-                    throw new Error("Invalid response from Groq API");
-                }
-
-                return data.choices[0].message.content;
-
-            } catch (error) {
-                console.error("Error fetching response from Groq API:", error);
-                throw error;
-            }
-        }
-
-        async function generateLearningObjectives() {
-            const userInput = document.getElementById('userInput').value.trim();
-
-            if (!userInput) {
-                alert('Please enter some text to generate learning objectives.');
-                return;
-            }
-
-            const resultsDiv = document.getElementById('results');
-            resultsDiv.innerHTML = '<p>Loading...</p>';
-
-            try {
-                const response = await fetchGroqResponse(userInput);
-
-                // Step 1: Display a table form, flowchart, or other appropriate format
-                resultsDiv.innerHTML = `
-                    <h3>Learning Objectives (Step 1)</h3>
-                    <div class="flowchart-placeholder">
-                        <strong>Flowchart or Mindmap Placeholder</strong><br>
-                        [A visual representation of objectives could go here]
-                    </div>
-                    <h3>Learning Objectives in Table Form:</h3>
-                    <table class="table-form">
-                        <thead>
-                            <tr>
-                                <th>Objective</th>
-                                <th>Description</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Objective 1</td>
-                                <td>${response}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                `;
-
-                // Step 2: Display one selected learning objective
-                resultsDiv.innerHTML += `
-                    <h3>Step 2: Final Learning Objective</h3>
-                    <div class="result-item">${response}</div>
-                `;
-                
-            } catch (error) {
-                resultsDiv.innerHTML = `<p>There was an error generating objectives: ${error.message}</p>`;
-            }
-        }
-    </script>
+    <div id="questionSection">
+      <h2>Generated Question:</h2>
+      <p id="questionContainer"></p>
+      <button id="nextQuestion">Next Question</button>
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.14.305/pdf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@v4.0.2/dist/tesseract.min.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
